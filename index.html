@@ -220,11 +220,24 @@
         }
 
         function startLiveClock() {
-            setInterval(() => {
-                const now = new Date();
-                document.getElementById('liveClock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12:false});
-            }, 1000);
+    setInterval(() => {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        
+        // Safe check to prevent mobile script crashes
+        const clockEl = document.getElementById('liveClock');
+        if (clockEl) {
+            clockEl.textContent = timeString;
         }
+        
+        // Also update the header tiny clock if it exists
+        const miniClockEl = document.querySelector('.text-xs.font-mono') || document.querySelector('header text');
+        if (miniClockEl) {
+            miniClockEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+    }, 1000);
+}
+
 
         function openTaskModal() {
             document.getElementById('inputTaskName').value = '';
