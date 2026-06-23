@@ -220,24 +220,11 @@
         }
 
         function startLiveClock() {
-    setInterval(() => {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-        
-        // Safe check to prevent mobile script crashes
-        const clockEl = document.getElementById('liveClock');
-        if (clockEl) {
-            clockEl.textContent = timeString;
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('liveClock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+            }, 1000);
         }
-        
-        // Also update the header tiny clock if it exists
-        const miniClockEl = document.querySelector('.text-xs.font-mono') || document.querySelector('header text');
-        if (miniClockEl) {
-            miniClockEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-        }
-    }, 1000);
-}
-
 
         function openTaskModal() {
             document.getElementById('inputTaskName').value = '';
@@ -369,4 +356,148 @@
                 status.innerText = "Idle";
                 status.className = "inline-block text-xs font-semibold px-3 py-1 rounded-full bg-slate-700 text-slate-400";
                 btn.innerText = "Start Focus Session";
-                btn.className = "w-full py-4 px-6 rounded-xl 
+                btn.className = "w-full py-4 px-6 rounded-xl font-bold shadow-lg transform active:scale-98 transition-all bg-indigo-600 hover:bg-indigo-500 text-white";
+                btn.classList.remove('hidden');
+                distForm.classList.add('hidden');
+                currentTaskDisplay.classList.add('hidden');
+                document.getElementById('timerDisplay').innerText = "00:00:00";
+                clearInterval(timerInterval);
+            }
+
+            const todayStr = new Date().toISOString().split('T')[0];
+            const dayData = appState.history[todayStr] || { focusTotalMs: 0, distractTotalMs: 0 };
+            document.getElementById('todayTotalFocus').innerText = formatMsToMinStr(dayData.focusTotalMs);
+            document.getElementById('todayTotalDistract').innerText = formatMsToMinStr(dayData.distractTotalMs);
+        }
+
+        function populateCategorySelect() {
+            const select = document.getElementById('selectDistractionCategory');
+            select.innerHTML = '';
+            appState.categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.innerText = cat;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderCategorySettingsList() {
+            const container = document.getElementById('categoryList');
+            container.innerHTML = '';
+            appState.categories.forEach((cat, idx) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-slate-900 p-2 rounded-lg text-xs";
+                div.innerHTML = `
+                    <span class="text-slate-300">${cat}</span>
+                    <button onclick="deleteCategory(${idx})" class="text-rose-400 hover:text-rose-500 font-bold">✕</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addNewCategory() {
+            const input = document.getElementById('newCategoryInput');
+            const val = input.value.trim();
+            if (val && !appState.categories.includes(val)) {
+                appState.categories.push(val);
+                input.value = '';
+                saveToStorage();
+                populateCategorySelect();
+                renderCategorySettingsList();
+            }
+        }
+
+        function deleteCategory(idx) {
+            appState.categories.splice(idx, 1);
+            saveToStorage();
+            populateCategorySelect();
+            renderCategorySettingsList();
+        }
+
+        function saveOutcomes() {
+            appState.outcomes.o1 = document.getElementById('outcome1').value.trim();
+            appState.outcomes.o2 = document.getElementById('outcome2').value.trim();
+            appState.outcomes.o3 = document.getElementById('outcome3').value.trim();
+            saveToStorage();
+            alert('Outcomes successfully locked in.');
+        }
+
+        function renderAnalytics() {
+            const container = document.getElementById('analyticsHistoryContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const sortedDates = Object.keys(appState.history).sort().reverse();
+            if (sortedDates.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">No historical logs found.</p>`;
+                return;
+            }
+
+            sortedDates.forEach(date => {
+                const day = appState.history[date];
+                const card = document.createElement('div');
+                card.className = "bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 space-y-2";
+                
+                let logItemsHtml = day.rawLogs.map(l => `
+                    <div class="flex justify-between items-start text-[11px] border-l-2 ${l.type === 'focus' ? 'border-emerald-500 pl-2' : 'border-amber-500 pl-2'} py-0.5">
+                        <div>
+                            <span class="font-medium text-slate-300">${l.details}</span>
+                            ${l.category ? `<span class="text-slate-500 block text-[10px]">${l.category}</span>` : ''}
+                        </div>
+                        <span class="font-mono text-slate-400">${formatMsToMinStr(l.ms)}</span>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-1.5">
+                        <span class="text-xs font-bold text-slate-400 font-mono">${date}</span>
+                        <div class="text-[11px] space-x-2">
+                            <span class="text-emerald-400 font-medium">🎯 ${formatMsToMinStr(day.focusTotalMs)}</span>
+                            <span class="text-amber-400 font-medium">🛑 ${formatMsToMinStr(day.distractTotalMs)}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5 pt-1">${logItemsHtml}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function switchTab(tabId) {
+            ['tracker', 'outcomes', 'analytics'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).className = "flex-1 py-3 text-center text-slate-400 font-semibold text-xs flex flex-col items-center gap-1";
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabId}`).className = "flex-1 py-3 text-center text-indigo-400 font-semibold text-xs flex flex-col items-center gap-1";
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('focusflow_state_v1', JSON.stringify(appState));
+        }
+
+        function loadFromStorage() {
+            const raw = localStorage.getItem('focusflow_state_v1');
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        appState = { ...appState, ...parsed };
+                    }
+                } catch (e) {
+                    console.error("Storage fallback failure resetting structure.", e);
+                }
+            }
+        }
+
+        function clearAllData() {
+            if (confirm("Are you certain you want to purge all historical data parameters?")) {
+                localStorage.removeItem('focusflow_state_v1');
+                appState.history = {};
+                appState.outcomes = { o1: '', o2: '', o3: '' };
+                saveToStorage();
+                initDOM();
+            }
+        }
+    </script>
+</body>
+</html>
