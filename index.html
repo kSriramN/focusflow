@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FocusFlow</title>
+    <!-- Tailwind CSS v4 Browser Compiler -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-24 font-sans select-none overflow-x-hidden">
 
+    <!-- Header App Bar Layout -->
     <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex justify-between items-center sticky top-0 z-50 shadow-md">
         <h1 class="text-xl font-bold text-indigo-400 tracking-wide">FocusFlow</h1>
         <div id="liveClock" class="bg-slate-900 text-slate-300 px-3 py-1 rounded-md font-mono text-sm border border-slate-700 shadow-inner">
@@ -16,12 +19,16 @@
         </div>
     </header>
 
+    <!-- Main Dynamic Application Container -->
     <main class="max-w-md mx-auto p-4 space-y-4">
 
+        <!-- PANEL 1: CORE TRACKER SCREEN VIEW -->
         <div id="trackerView" class="space-y-4" style="display: block;">
             
+            <!-- TOP INSERTION ZONE FOR MEETINGS -->
             <div id="meetingTopZone"></div>
 
+            <!-- CORE TIMER CARD -->
             <section id="timerCard" class="bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-700/50 relative overflow-hidden transition-all duration-300">
                 <div class="text-center space-y-4">
                     <div id="focusMeta" class="text-sm font-medium text-slate-400 min-h-[20px] transition-all duration-200"></div>
@@ -39,43 +46,36 @@
                 </div>
             </section>
 
+            <!-- MEETING ALERTS WIDGET -->
             <section id="meetingAlertsWidget" class="bg-slate-800 rounded-2xl p-5 shadow-xl border border-slate-700/50 space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-700 pb-2">
                     <div class="flex items-center space-x-2">
                         <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i>
-                        <h2 class="text-xs font-bold text-slate-400 tracking-wider uppercase">Early Morning Meeting Alerts</h2>
+                        <h2 class="text-xs font-bold text-slate-400 tracking-wider uppercase">Meeting Schedule Alerts</h2>
                     </div>
-                    <button onclick="toggleWidgetLayoutPosition()" class="text-[10px] bg-slate-700/60 hover:bg-slate-600 text-indigo-400 px-2 py-1 rounded border border-slate-600/40 flex items-center space-x-1 transition-all">
-                        <i data-lucide="move" class="w-3 h-3"></i>
-                        <span id="layoutPosLabel">Move to Bottom</span>
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="addNewMeetingRow()" class="bg-indigo-600 hover:bg-indigo-500 text-white p-1 rounded transition-all flex items-center justify-center" title="Add Meeting">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="toggleWidgetLayoutPosition()" class="text-[10px] bg-slate-700/60 hover:bg-slate-600 text-indigo-400 px-2 py-1 rounded border border-slate-600/40 flex items-center space-x-1 transition-all">
+                            <i data-lucide="move" class="w-3 h-3"></i>
+                            <span id="layoutPosLabel">Move to Bottom</span>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="space-y-3">
-                    <div>
-                        <span class="block text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Today</span>
-                        <div class="grid grid-cols-3 gap-2">
-                            <input id="meetTimeToday" type="text" placeholder="e.g., 08:30 AM" class="bg-slate-900 border border-slate-700/60 rounded-lg px-2 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500 font-mono">
-                            <input id="meetSubToday" type="text" placeholder="Subject / Agenda" class="col-span-2 bg-slate-900 border border-slate-700/60 rounded-lg px-2 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <span class="block text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-1">Tomorrow</span>
-                        <div class="grid grid-cols-3 gap-2">
-                            <input id="meetTimeTomorrow" type="text" placeholder="e.g., 08:00 AM" class="bg-slate-900 border border-slate-700/60 rounded-lg px-2 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500 font-mono">
-                            <input id="meetSubTomorrow" type="text" placeholder="Subject / Agenda" class="col-span-2 bg-slate-900 border border-slate-700/60 rounded-lg px-2 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                </div>
+                <!-- Dynamic Input Container Rows -->
+                <div id="meetingsDynamicContainer" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
 
                 <button onclick="lockInMeetings()" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white font-semibold text-xs rounded-lg transition-all border border-slate-600/50">
                     Lock In Schedule
                 </button>
             </section>
 
+            <!-- DYNAMIC SELECTION INTERFACE CONTEXT AREA -->
             <section id="actionContainer" class="hidden transition-all duration-300"></section>
 
+            <!-- AGGREGATES SUMMARY COMPONENT -->
             <section class="bg-slate-800 rounded-2xl p-5 shadow-xl border border-slate-700/50 space-y-4">
                 <h2 class="text-xs font-bold text-slate-400 tracking-wider uppercase border-b border-slate-700 pb-2">Today's Quick Aggregates</h2>
                 <div class="grid grid-cols-2 gap-4">
@@ -90,9 +90,36 @@
                 </div>
             </section>
 
+            <!-- CATEGORY MANAGER CRADLE (MOVED TO BOTTOM OF TRACKER) -->
+            <section class="bg-slate-800 rounded-2xl p-5 border border-slate-700/50 shadow-xl space-y-4">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-700 pb-2">Custom Category Management Engine</h3>
+                
+                <!-- Focus Category Admin -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-indigo-400 uppercase tracking-wider">Focus Objectives Categories</label>
+                    <div id="focusChipsLayout" class="flex flex-wrap gap-1.5 p-2 bg-slate-900/60 rounded-xl border border-slate-700/40"></div>
+                    <div class="flex gap-2">
+                        <input id="newFocusCatInput" type="text" placeholder="Add custom focus category..." class="flex-1 bg-slate-900 border border-slate-700/60 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500">
+                        <button onclick="addCategoryRow('focus')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg text-xs font-bold">+</button>
+                    </div>
+                </div>
+
+                <!-- Distraction Category Admin -->
+                <div class="space-y-2 pt-2 border-t border-slate-700/40">
+                    <label class="block text-xs font-semibold text-amber-500 uppercase tracking-wider">Distraction Driver Categories</label>
+                    <div id="distractChipsLayout" class="flex flex-wrap gap-1.5 p-2 bg-slate-900/60 rounded-xl border border-slate-700/40"></div>
+                    <div class="flex gap-2">
+                        <input id="newDistractCatInput" type="text" placeholder="Add custom distraction category..." class="flex-1 bg-slate-900 border border-slate-700/60 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-amber-500">
+                        <button onclick="addCategoryRow('distraction')" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded-lg text-xs font-bold">+</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BOTTOM INSERTION ZONE FOR MEETINGS -->
             <div id="meetingBottomZone"></div>
         </div>
 
+        <!-- PANEL 2: TARGETS / GOALS SCREEN VIEW -->
         <div id="targetsView" class="space-y-4" style="display: none;">
             <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700/60 shadow-md">
                 <button id="tabTargetDay" onclick="switchTargetTimeframe('day')" class="flex-1 py-2 text-xs font-semibold rounded-lg bg-indigo-600 text-white transition-all">Daily</button>
@@ -103,7 +130,7 @@
             <section class="bg-slate-800 rounded-2xl p-5 shadow-xl border border-slate-700/50 space-y-4">
                 <div>
                     <h2 id="horizonTitle" class="text-md font-bold text-slate-100 tracking-wide">Daily Core Target Outcomes</h2>
-                    <p id="horizonSubtitle" class="text-xs text-slate-400 mt-0.5">Establish the top 3 high-impact deliverables you intend to hit today.</p>
+                    <p id="horizonSubtitle" class="text-xs text-slate-400 mt-0.5">Establish your top deliverables.</p>
                 </div>
 
                 <div class="space-y-3 pt-2">
@@ -127,89 +154,71 @@
             </section>
         </div>
 
+        <!-- PANEL 3: DYNAMIC ANALYTICS VIEW -->
         <div id="analyticsView" class="space-y-5" style="display: none;">
+            
             <section class="bg-slate-800 rounded-2xl p-5 border border-slate-700/50 text-center shadow-xl">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Today's Focus Efficiency</span>
                 <div id="weeklyScoreDisplay" class="text-4xl font-extrabold text-emerald-400 font-mono my-2">0%</div>
-                <p id="weeklyScoreMeta" class="text-xs text-slate-400">Log sessions to evaluate your efficiency matrix.</p>
+                <p id="weeklyScoreMeta" class="text-xs text-slate-400">Log sessions to evaluate performance parameters.</p>
             </section>
 
             <section class="bg-slate-800 rounded-2xl p-5 border border-slate-700/50 shadow-xl space-y-4">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-700 pb-2">Weekly Time Distribution</h3>
-                <div id="barChartContainer" class="space-y-3">
-                    </div>
-                <div class="flex justify-center space-x-4 text-[11px] pt-2 border-t border-slate-700/30">
-                    <div class="flex items-center space-x-1.5">
-                        <span class="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span>
-                        <span class="text-slate-400">Focus Blocks</span>
-                    </div>
-                    <div class="flex items-center space-x-1.5">
-                        <span class="w-2.5 h-2.5 rounded-sm bg-amber-500"></span>
-                        <span class="text-slate-400">Distractions</span>
-                    </div>
-                </div>
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-700 pb-2">Weekly Distribution Matrix</h3>
+                <div id="barChartContainer" class="space-y-3"></div>
             </section>
 
             <section class="bg-slate-800 rounded-2xl p-5 border border-slate-700/50 shadow-xl space-y-3">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-700 pb-2">Primary Interruption Drivers</h3>
-                <div id="driversListContainer" class="divide-y divide-slate-700/40 text-sm">
-                    </div>
+                <div id="driversListContainer" class="divide-y divide-slate-700/40 text-sm"></div>
             </section>
 
             <section class="bg-slate-800 rounded-2xl p-5 border border-slate-700/50 shadow-xl space-y-3">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-700 pb-2">Data Operations Wizard</h3>
-                <div class="space-y-2">
-                    <p class="text-[11px] text-slate-400">Import your handwritten logs converted via AI into clean text.</p>
-                    <div class="flex gap-2">
-                        <input type="file" id="csvFileInput" accept=".csv,.txt" class="hidden" onchange="importHumanCSV(this)">
-                        <button onclick="document.getElementById('csvFileInput').click()" class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl transition-all border border-slate-600/40">
-                            📁 Import AI CSV Text
-                        </button>
-                        <button onclick="exportHumanCSV()" class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl transition-all border border-slate-600/40">
-                            💾 Export CSV Data
-                        </button>
-                    </div>
+                <div class="flex gap-2">
+                    <input type="file" id="csvFileInput" accept=".csv,.txt" class="hidden" onchange="importHumanCSV(this)">
+                    <button onclick="document.getElementById('csvFileInput').click()" class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl border border-slate-600/40">📁 Import CSV</button>
+                    <button onclick="exportHumanCSV()" class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-xl border border-slate-600/40">💾 Export CSV</button>
                 </div>
             </section>
         </div>
 
     </main>
 
+    <!-- Navigation Layout Bar -->
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-2xl z-40">
         <div class="max-w-md mx-auto grid grid-cols-3 h-16">
-            <button id="navBtnTracker" onclick="switchView('tracker')" class="flex flex-col items-center justify-center text-indigo-400 transition-colors focus:outline-none">
+            <button id="navBtnTracker" onclick="switchView('tracker')" class="flex flex-col items-center justify-center text-indigo-400 focus:outline-none">
                 <i data-lucide="timer" class="w-5 h-5"></i>
                 <span class="text-[11px] font-semibold tracking-wide mt-1">Tracker</span>
             </button>
-            <button id="navBtnTargets" onclick="switchView('targets')" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-200 transition-colors focus:outline-none">
+            <button id="navBtnTargets" onclick="switchView('targets')" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-200 focus:outline-none">
                 <i data-lucide="target" class="w-5 h-5"></i>
                 <span class="text-[11px] font-medium tracking-wide mt-1">Targets</span>
             </button>
-            <button id="navBtnAnalytics" onclick="switchView('analytics')" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-200 transition-colors focus:outline-none">
+            <button id="navBtnAnalytics" onclick="switchView('analytics')" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-200 focus:outline-none">
                 <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                 <span class="text-[11px] font-medium tracking-wide mt-1">Analytics</span>
             </button>
         </div>
     </nav>
 
+    <!-- ====== APPLICATION ENGINE ENGINE ====== -->
     <script>
         let appState = {
             currentState: 'idle',
-            currentTaskName: '',
-            currentSessionStart: null,
-            currentDistractionStart: null,
-            currentTargetHorizon: 'day',
-            widgetPosition: 'top', // 'top' or 'bottom'
-            outcomes: {
-                day: { o1: '', o2: '', o3: '' },
-                week: { o1: '', o2: '', o3: '' },
-                month: { o1: '', o2: '', o3: '' }
-            },
-            meetings: {
-                todayTime: '', todaySub: '',
-                tomorrowTime: '', tomorrowSub: ''
-            },
-            categories: ['Work Communications', 'Personal Device', 'General Procrastination', 'Unplanned Meeting'],
+            currentTaskCategory: '',
+            currentSessionStart: null,     
+            accumulatedFocusTimeMs: 0,    
+            currentDistractionStart: null, 
+            widgetPosition: 'top',
+            outcomes: { day: { o1: '', o2: '', o3: '' }, week: { o1: '', o2: '', o3: '' }, month: { o1: '', o2: '', o3: '' } },
+            meetingsList: [
+                { id: 'm1', label: 'Today', time: '', subject: '' },
+                { id: 'm2', label: 'Tomorrow', time: '', subject: '' }
+            ],
+            focusCategories: ['Development', 'Documentation', 'Architecture Review', 'Production Testing'],
+            distractCategories: ['Work Communications', 'Personal Device', 'General Procrastination', 'Unplanned Meeting'],
             history: []
         };
 
@@ -220,36 +229,23 @@
             initDOM();
             startLiveClock();
             applyWidgetLayout();
+            renderMeetingDashboard();
+            renderDictionaryConfigChips(); // Keep tracker chips synchronized immediately
             lucide.createIcons();
         }
 
         function loadFromStorage() {
-            const savedState = localStorage.getItem('focusflow_db_v4');
+            const savedState = localStorage.getItem('focusflow_db_v5_prod');
             if (savedState) {
                 try {
                     const parsed = JSON.parse(savedState);
-                    if (!parsed.outcomes || !parsed.outcomes.day) {
-                        parsed.outcomes = {
-                            day: { o1: '', o2: '', o3: '' },
-                            week: { o1: '', o2: '', o3: '' },
-                            month: { o1: '', o2: '', o3: '' }
-                        };
-                    }
-                    if (!parsed.meetings) {
-                        parsed.meetings = { todayTime: '', todaySub: '', tomorrowTime: '', tomorrowSub: '' };
-                    }
-                    if (!parsed.widgetPosition) {
-                        parsed.widgetPosition = 'top';
-                    }
                     appState = { ...appState, ...parsed };
-                } catch (e) {
-                    console.error("Storage corrupted. Fallback applied.", e);
-                }
+                } catch (e) { console.error("Storage fallback deployed", e); }
             }
         }
 
         function saveToStorage() {
-            localStorage.setItem('focusflow_db_v4', JSON.stringify(appState));
+            localStorage.setItem('focusflow_db_v5_prod', JSON.stringify(appState));
         }
 
         function startLiveClock() {
@@ -262,29 +258,78 @@
         }
 
         function initDOM() {
-            const primaryBtn = document.getElementById('primaryBtn');
-            if (primaryBtn) primaryBtn.onclick = handlePrimaryAction;
-            
-            document.getElementById('meetTimeToday').value = appState.meetings.todayTime || '';
-            document.getElementById('meetSubToday').value = appState.meetings.todaySub || '';
-            document.getElementById('meetTimeTomorrow').value = appState.meetings.tomorrowTime || '';
-            document.getElementById('meetSubTomorrow').value = appState.meetings.tomorrowSub || '';
-
+            document.getElementById('primaryBtn').onclick = handlePrimaryActionToggle;
             renderApp();
         }
 
-        function lockInMeetings() {
-            appState.meetings = {
-                todayTime: document.getElementById('meetTimeToday').value.trim(),
-                todaySub: document.getElementById('meetSubToday').value.trim(),
-                tomorrowTime: document.getElementById('meetTimeTomorrow').value.trim(),
-                tomorrowSub: document.getElementById('meetSubTomorrow').value.trim()
-            };
-            saveToStorage();
-            alert("Early morning alerts updated securely!");
+        /* DYNAMIC MEETING ENGINE */
+        function renderMeetingDashboard() {
+            const container = document.getElementById('meetingsDynamicContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            appState.meetingsList.forEach((meet) => {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-12 gap-2 items-center bg-slate-900/40 p-2 rounded-xl border border-slate-700/30";
+                row.innerHTML = `
+                    <div class="col-span-3">
+                        <input type="text" value="${meet.label}" onchange="updateMeetingMeta('${meet.id}', 'label', this.value)" class="w-full bg-transparent font-bold text-[11px] text-indigo-400 uppercase tracking-wider outline-none border-b border-transparent focus:border-indigo-500/40">
+                    </div>
+                    <div class="col-span-3">
+                        <input type="text" placeholder="14:30" value="${meet.time}" oninput="applyTimeMask(this); updateMeetingMeta('${meet.id}', 'time', this.value)" maxLength="5" class="w-full bg-slate-900 border border-slate-700/60 rounded-lg px-1.5 py-1 text-xs text-slate-200 outline-none focus:border-indigo-500 font-mono text-center">
+                    </div>
+                    <div class="col-span-5">
+                        <input type="text" placeholder="Agenda" value="${meet.subject}" onchange="updateMeetingMeta('${meet.id}', 'subject', this.value)" class="w-full bg-slate-900 border border-slate-700/60 rounded-lg px-2 py-1 text-xs text-slate-200 outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="col-span-1 text-right">
+                        <button onclick="removeMeetingRow('${meet.id}')" class="text-slate-500 hover:text-red-400 text-xs transition-colors font-bold">×</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
         }
 
-        // Dynamic Widget Rearranging Logic
+        function applyTimeMask(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            if (value.length > 4) value = value.slice(0, 4);
+            
+            if (value.length >= 3) {
+                input.value = value.slice(0, 2) + ':' + value.slice(2);
+            } else {
+                input.value = value;
+            }
+        }
+
+        function updateMeetingMeta(id, field, value) {
+            const item = appState.meetingsList.find(m => m.id === id);
+            if (item) {
+                item[field] = value;
+                saveToStorage();
+            }
+        }
+
+        function addNewMeetingRow() {
+            appState.meetingsList.push({
+                id: 'm_' + Date.now(),
+                label: 'Meeting',
+                time: '',
+                subject: ''
+            });
+            saveToStorage();
+            renderMeetingDashboard();
+        }
+
+        function removeMeetingRow(id) {
+            appState.meetingsList = appState.meetingsList.filter(m => m.id !== id);
+            saveToStorage();
+            renderMeetingDashboard();
+        }
+
+        function lockInMeetings() {
+            saveToStorage();
+            alert("Schedules successfully locked into tracking space.");
+        }
+
         function toggleWidgetLayoutPosition() {
             appState.widgetPosition = (appState.widgetPosition === 'top') ? 'bottom' : 'top';
             saveToStorage();
@@ -296,7 +341,6 @@
             const topZone = document.getElementById('meetingTopZone');
             const bottomZone = document.getElementById('meetingBottomZone');
             const label = document.getElementById('layoutPosLabel');
-
             if (!widget || !topZone || !bottomZone) return;
 
             if (appState.widgetPosition === 'bottom') {
@@ -308,14 +352,291 @@
             }
         }
 
-        // Bulletproof Display Override Router to eliminate stacking bugs completely
+        /* ENGINE TRACKER INTERFACES */
+        function handlePrimaryActionToggle() {
+            if (appState.currentState === 'idle') {
+                renderFocusSelectionUI();
+            } else if (appState.currentState === 'focusing') {
+                const segmentFocusTime = Date.now() - appState.currentSessionStart;
+                appState.accumulatedFocusTimeMs += segmentFocusTime;
+                
+                appState.currentState = 'distracted';
+                appState.currentDistractionStart = Date.now();
+                saveToStorage();
+                renderApp();
+            }
+        }
+
+        function renderFocusSelectionUI() {
+            const actionContainer = document.getElementById('actionContainer');
+            if (!actionContainer) return;
+
+            let optHtml = appState.focusCategories.map(cat => `
+                <button onclick="triggerFocusBlock('${cat}')" class="w-full py-2.5 bg-slate-900 border border-slate-700 hover:border-indigo-500 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold rounded-xl text-left px-4 transition-all flex justify-between items-center">
+                    <span>${cat}</span>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-500"></i>
+                </button>
+            `).join('');
+
+            actionContainer.className = "block bg-slate-800 rounded-2xl p-5 border border-indigo-500/20 shadow-xl space-y-3";
+            actionContainer.innerHTML = `
+                <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
+                    <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Select Focus Core Objective</span>
+                    <button onclick="hideActionContainer()" class="text-slate-500 hover:text-slate-300 text-xs font-bold">Cancel</button>
+                </div>
+                <div class="space-y-2 max-h-48 overflow-y-auto pr-1">${optHtml}</div>
+            `;
+            lucide.createIcons();
+        }
+
+        function triggerFocusBlock(categoryName) {
+            appState.currentState = 'focusing';
+            appState.currentTaskCategory = categoryName;
+            appState.currentSessionStart = Date.now();
+            appState.accumulatedFocusTimeMs = 0; 
+            appState.currentDistractionStart = null;
+            saveToStorage();
+            renderApp();
+        }
+
+        function hideActionContainer() {
+            const container = document.getElementById('actionContainer');
+            container.className = "hidden";
+            container.innerHTML = "";
+        }
+
+        function handleLogReason(reasonText, category) {
+            if (appState.currentState !== 'distracted') return;
+
+            const now = Date.now();
+            const distractionDuration = now - appState.currentDistractionStart;
+
+            appState.history.push({
+                task: appState.currentTaskCategory,
+                startTime: appState.currentSessionStart, 
+                endTime: now,
+                focusDurationMs: appState.accumulatedFocusTimeMs, 
+                distractionTime: distractionDuration,
+                reason: reasonText.trim() || "Context Interruption",
+                category: category,
+                dateStr: new Date().toLocaleDateString('en-US')
+            });
+
+            appState.currentState = 'focusing';
+            appState.currentSessionStart = Date.now(); 
+            appState.currentDistractionStart = null;
+            
+            saveToStorage();
+            renderApp();
+        }
+
+        function handleCompleteSession() {
+            if (appState.currentState === 'idle') return;
+
+            const now = Date.now();
+            let trailingDistractionTime = 0;
+
+            if (appState.currentState === 'focusing') {
+                const segmentFocusTime = now - appState.currentSessionStart;
+                appState.accumulatedFocusTimeMs += segmentFocusTime;
+            } else if (appState.currentState === 'distracted') {
+                trailingDistractionTime = now - appState.currentDistractionStart;
+            }
+
+            appState.history.push({
+                task: appState.currentTaskCategory,
+                startTime: Date.now(), 
+                endTime: now,
+                focusDurationMs: appState.accumulatedFocusTimeMs,
+                distractionTime: trailingDistractionTime,
+                reason: appState.currentState === 'distracted' ? "Forced termination inside context slip" : "Clean block completion",
+                category: appState.currentState === 'distracted' ? "General Procrastination" : "None",
+                dateStr: new Date().toLocaleDateString('en-US')
+            });
+
+            appState.currentState = 'idle';
+            appState.currentTaskCategory = '';
+            appState.currentSessionStart = null;
+            appState.accumulatedFocusTimeMs = 0;
+            appState.currentDistractionStart = null;
+
+            saveToStorage();
+            renderApp();
+        }
+
+        function renderApp() {
+            clearInterval(timerInterval);
+
+            const card = document.getElementById('timerCard');
+            const meta = document.getElementById('focusMeta');
+            const badge = document.getElementById('statusBadge');
+            const btn = document.getElementById('primaryBtn');
+            const display = document.getElementById('mainDisplay');
+            const actionContainer = document.getElementById('actionContainer');
+
+            if (!card || !display) return;
+
+            const todayStr = new Date().toLocaleDateString('en-US');
+            let todayFocusMs = 0;
+            let todayDistractedMs = 0;
+
+            appState.history.forEach(item => {
+                if(item.dateStr === todayStr) {
+                    todayDistractedMs += item.distractionTime;
+                    todayFocusMs += (item.focusDurationMs || 0);
+                }
+            });
+
+            document.getElementById('aggFocus').textContent = `${Math.round(todayFocusMs / 60000)}m`;
+            document.getElementById('aggDistracted').textContent = `${Math.round(todayDistractedMs / 60000)}m`;
+
+            if (appState.currentState === 'idle') {
+                card.className = "bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-700/50 relative overflow-hidden";
+                meta.innerHTML = `<span class="text-slate-500 text-xs uppercase tracking-wider font-bold">No Tracked Run Block</span>`;
+                badge.className = "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-slate-700 text-slate-300 shadow-sm";
+                badge.textContent = "Idle";
+                btn.className = "w-full py-4 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg mt-2";
+                btn.textContent = "Start Focusing";
+                display.textContent = "00:00:00";
+                actionContainer.className = "hidden";
+                btn.style.display = "block";
+            } 
+            else if (appState.currentState === 'focusing') {
+                card.className = "bg-slate-800/90 rounded-2xl p-6 shadow-xl border border-emerald-500/30 relative overflow-hidden";
+                meta.innerHTML = `<span class="text-slate-400">Target Track:</span> <span class="text-indigo-400 font-semibold underline font-sans">${appState.currentTaskCategory}</span>`;
+                badge.className = "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm animate-pulse";
+                badge.textContent = "Focus Sprint Active";
+                btn.className = "w-full py-4 bg-amber-600 hover:bg-amber-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg mt-2";
+                btn.textContent = "🛑 Distraction Hit";
+                btn.style.display = "block";
+
+                const runFocusTimer = () => {
+                    const dynamicTotalMs = appState.accumulatedFocusTimeMs + (Date.now() - appState.currentSessionStart);
+                    const elapsedSec = Math.floor(dynamicTotalMs / 1000);
+                    const hrs = String(Math.floor(elapsedSec / 3600)).padStart(2, '0');
+                    const mins = String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0');
+                    const secs = String(elapsedSec % 60).padStart(2, '0');
+                    display.textContent = `${hrs}:${mins}:${secs}`;
+                };
+                runFocusTimer();
+                timerInterval = setInterval(runFocusTimer, 1000);
+
+                actionContainer.className = "block mt-4";
+                actionContainer.innerHTML = `
+                    <button onclick="handleCompleteSession()" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition-all shadow-md">
+                        Complete Session Block
+                    </button>
+                `;
+            } 
+            else if (appState.currentState === 'distracted') {
+                card.className = "bg-slate-800/90 rounded-2xl p-6 shadow-xl border border-red-500/30 relative overflow-hidden";
+                meta.innerHTML = `<span class="text-slate-400">Paused Category:</span> <span class="text-indigo-400 font-semibold">${appState.currentTaskCategory}</span>`;
+                badge.className = "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/20 shadow-sm";
+                badge.textContent = "Distraction Tracker Running";
+                btn.style.display = "none";
+
+                const runDistractionTimer = () => {
+                    const elapsedSec = Math.floor((Date.now() - appState.currentDistractionStart) / 1000);
+                    const hrs = String(Math.floor(elapsedSec / 3600)).padStart(2, '0');
+                    const mins = String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0');
+                    const secs = String(elapsedSec % 60).padStart(2, '0');
+                    display.textContent = `${hrs}:${mins}:${secs}`;
+                };
+                runDistractionTimer();
+                timerInterval = setInterval(runDistractionTimer, 1000);
+
+                let optHTML = appState.distractCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+                actionContainer.className = "block mt-4 bg-slate-800 rounded-2xl p-5 border border-amber-500/20 shadow-xl space-y-4";
+                actionContainer.innerHTML = `
+                    <div class="flex items-center space-x-2 border-b border-slate-700/50 pb-2">
+                        <span class="text-base">⚠️</span>
+                        <h3 class="text-sm font-bold text-amber-500 uppercase tracking-wider">Context Breakdown Interface</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">What broke focus matrix continuity?</label>
+                            <input id="distractionInput" type="text" placeholder="e.g., Critical call, notification pulse..." class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2.5 text-sm text-slate-100 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Interruption Category Driver</label>
+                            <select id="categorySelect" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2.5 text-sm text-slate-100 outline-none">
+                                ${optHTML}
+                            </select>
+                        </div>
+                        <button id="submitLogBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition-all mt-2">
+                            Log Driver & Resume Focus Matrix
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById('submitLogBtn').onclick = () => {
+                    const resText = document.getElementById('distractionInput').value;
+                    const catVal = document.getElementById('categorySelect').value;
+                    handleLogReason(resText, catVal);
+                };
+            }
+        }
+
+        /* DICTIONARY MANAGEMENT ENGINE */
+        function renderDictionaryConfigChips() {
+            const focusContainer = document.getElementById('focusChipsLayout');
+            const distractContainer = document.getElementById('distractChipsLayout');
+            
+            if (!focusContainer || !distractContainer) return;
+
+            focusContainer.innerHTML = appState.focusCategories.map(cat => `
+                <span class="inline-flex items-center bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-md text-[11px] font-medium">
+                    ${cat}
+                    <button onclick="removeCategoryNode('focus', '${cat}')" class="ml-1 text-slate-500 hover:text-red-400 font-bold font-sans">×</button>
+                </span>
+            `).join('');
+
+            distractContainer.innerHTML = appState.distractCategories.map(cat => `
+                <span class="inline-flex items-center bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-md text-[11px] font-medium">
+                    ${cat}
+                    <button onclick="removeCategoryNode('distraction', '${cat}')" class="ml-1 text-slate-500 hover:text-red-400 font-bold font-sans">×</button>
+                </span>
+            `).join('');
+        }
+
+        function addCategoryRow(track) {
+            if (track === 'focus') {
+                const input = document.getElementById('newFocusCatInput');
+                const val = input.value.trim();
+                if (val && !appState.focusCategories.includes(val)) {
+                    appState.focusCategories.push(val);
+                    input.value = '';
+                }
+            } else {
+                const input = document.getElementById('newDistractCatInput');
+                const val = input.value.trim();
+                if (val && !appState.distractCategories.includes(val)) {
+                    appState.distractCategories.push(val);
+                    input.value = '';
+                }
+            }
+            saveToStorage();
+            renderDictionaryConfigChips();
+        }
+
+        function removeCategoryNode(track, name) {
+            if (track === 'focus') {
+                appState.focusCategories = appState.focusCategories.filter(c => c !== name);
+            } else {
+                appState.distractCategories = appState.distractCategories.filter(c => c !== name);
+            }
+            saveToStorage();
+            renderDictionaryConfigChips();
+        }
+
+        /* VIEWS / VISUAL ROUTER INTERFACES */
         function switchView(target) {
             const panels = {
                 tracker: document.getElementById('trackerView'),
                 targets: document.getElementById('targetsView'),
                 analytics: document.getElementById('analyticsView')
             };
-            
             const navButtons = {
                 tracker: document.getElementById('navBtnTracker'),
                 targets: document.getElementById('navBtnTargets'),
@@ -336,7 +657,9 @@
                 }
             });
 
-            if (target === 'targets') {
+            if (target === 'tracker') {
+                renderDictionaryConfigChips(); // Re-render if switching back to tracker
+            } else if (target === 'targets') {
                 renderTargetsDashboard();
             } else if (target === 'analytics') {
                 calculateAndRenderAnalytics();
@@ -345,14 +668,11 @@
 
         function switchTargetTimeframe(horizon) {
             appState.currentTargetHorizon = horizon;
-            const horizons = ['day', 'week', 'month'];
-            horizons.forEach(h => {
+            ['day', 'week', 'month'].forEach(h => {
                 const btn = document.getElementById(`tabTarget${h.charAt(0).toUpperCase() + h.slice(1)}`);
-                if (h === horizon) {
-                    btn.className = "flex-1 py-2 text-xs font-semibold rounded-lg bg-indigo-600 text-white transition-all";
-                } else {
-                    btn.className = "flex-1 py-2 text-xs font-medium text-slate-400 hover:text-slate-200 transition-all";
-                }
+                if(btn) btn.className = (h === horizon) 
+                    ? "flex-1 py-2 text-xs font-semibold rounded-lg bg-indigo-600 text-white transition-all"
+                    : "flex-1 py-2 text-xs font-medium text-slate-400 hover:text-slate-200 transition-all";
             });
             renderTargetsDashboard();
         }
@@ -387,189 +707,7 @@
                 o3: document.getElementById('outcome3').value.trim()
             };
             saveToStorage();
-            alert(`Strategic targets locked in for your ${currentHorizon} perspective!`);
-        }
-
-        function handlePrimaryAction() {
-            if (appState.currentState === 'idle') {
-                const task = prompt("What target objective or deliverable are you focusing on?");
-                if (!task || task.trim() === '') return;
-                
-                appState.currentState = 'focusing';
-                appState.currentTaskName = task.trim();
-                appState.currentSessionStart = Date.now();
-                appState.currentDistractionStart = null;
-            } else if (appState.currentState === 'focusing') {
-                appState.currentState = 'distracted';
-                appState.currentDistractionStart = Date.now();
-            }
-            saveToStorage();
-            renderApp();
-        }
-
-        function handleLogReason(reason, category) {
-            if (appState.currentState !== 'distracted') return;
-
-            const now = Date.now();
-            const distractionDuration = now - appState.currentDistractionStart;
-            
-            appState.history.push({
-                task: appState.currentTaskName,
-                startTime: appState.currentSessionStart,
-                endTime: now,
-                distractionTime: distractionDuration,
-                reason: reason.trim() || "Unspecified Interruption",
-                category: category,
-                dateStr: new Date().toLocaleDateString('en-US')
-            });
-
-            appState.currentState = 'focusing';
-            appState.currentDistractionStart = null;
-            
-            saveToStorage();
-            renderApp();
-        }
-
-        function handleCompleteSession() {
-            if (appState.currentState === 'idle') return;
-
-            const now = Date.now();
-            let closingDistractionTime = 0;
-
-            if (appState.currentState === 'distracted') {
-                closingDistractionTime = now - appState.currentDistractionStart;
-            }
-
-            appState.history.push({
-                task: appState.currentTaskName,
-                startTime: appState.currentSessionStart,
-                endTime: now,
-                distractionTime: closingDistractionTime,
-                reason: appState.currentState === 'distracted' ? "Forced close mid-distraction" : "Clean exit",
-                category: appState.currentState === 'distracted' ? "General Procrastination" : "None",
-                dateStr: new Date().toLocaleDateString('en-US')
-            });
-
-            appState.currentState = 'idle';
-            appState.currentTaskName = '';
-            appState.currentSessionStart = null;
-            appState.currentDistractionStart = null;
-
-            saveToStorage();
-            renderApp();
-        }
-
-        function renderApp() {
-            clearInterval(timerInterval);
-
-            const card = document.getElementById('timerCard');
-            const meta = document.getElementById('focusMeta');
-            const badge = document.getElementById('statusBadge');
-            const btn = document.getElementById('primaryBtn');
-            const display = document.getElementById('mainDisplay');
-            const actionContainer = document.getElementById('actionContainer');
-
-            if (!card || !display) return;
-
-            const todayStr = new Date().toLocaleDateString('en-US');
-            let todayFocusMs = 0;
-            let todayDistractedMs = 0;
-
-            appState.history.forEach(item => {
-                if(item.dateStr === todayStr) {
-                    const totalDuration = item.endTime - item.startTime;
-                    todayDistractedMs += item.distractionTime;
-                    todayFocusMs += (totalDuration - item.distractionTime);
-                }
-            });
-
-            document.getElementById('aggFocus').textContent = `${Math.round(todayFocusMs / 60000)}m`;
-            document.getElementById('aggDistracted').textContent = `${Math.round(todayDistractedMs / 60000)}m`;
-
-            if (appState.currentState === 'idle') {
-                card.className = "bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-700/50 relative overflow-hidden";
-                meta.innerHTML = `<span class="text-slate-500 text-xs uppercase tracking-wider font-bold">No Active Tracking Block</span>`;
-                badge.className = "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-slate-700 text-slate-300 shadow-sm";
-                badge.textContent = "Idle";
-                btn.className = "w-full py-4 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg mt-2";
-                btn.textContent = "Start Focusing";
-                display.textContent = "00:00:00";
-                actionContainer.className = "hidden";
-                actionContainer.innerHTML = "";
-            } 
-            else if (appState.currentState === 'focusing') {
-                card.className = "bg-slate-800/90 rounded-2xl p-6 shadow-xl border border-emerald-500/30 relative overflow-hidden";
-                meta.innerHTML = `<span class="text-slate-400">Focusing on:</span> <span class="text-indigo-400 font-semibold underline decoration-indigo-500/30">${appState.currentTaskName}</span>`;
-                badge.className = "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm animate-pulse";
-                badge.textContent = "Deep Focus Active";
-                btn.className = "w-full py-4 bg-amber-600 hover:bg-amber-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg mt-2";
-                btn.textContent = "🛑 Distraction Hit";
-
-                const runTimer = () => {
-                    const elapsedSec = Math.floor((Date.now() - appState.currentSessionStart) / 1000);
-                    const hrs = String(Math.floor(elapsedSec / 3600)).padStart(2, '0');
-                    const mins = String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0');
-                    const secs = String(elapsedSec % 60).padStart(2, '0');
-                    display.textContent = `${hrs}:${mins}:${secs}`;
-                };
-                runTimer();
-                timerInterval = setInterval(runTimer, 1000);
-
-                actionContainer.className = "block mt-4";
-                actionContainer.innerHTML = `
-                    <button onclick="handleCompleteSession()" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 text-sm font-semibold rounded-xl active:scale-[0.99] transition-all shadow-md">
-                        Complete Session & Save Log
-                    </button>
-                `;
-            } 
-            else if (appState.currentState === 'distracted') {
-                card.className = "bg-slate-800/90 rounded-2xl p-6 shadow-xl border border-red-500/30 relative overflow-hidden";
-                meta.innerHTML = `<span class="text-slate-400">Interrupted during:</span> <span class="text-indigo-400 font-semibold">${appState.currentTaskName}</span>`;
-                badge.className = "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/20 shadow-sm";
-                badge.textContent = "Distraction Log Active";
-                btn.className = "hidden";
-
-                const runTimer = () => {
-                    const elapsedSec = Math.floor((Date.now() - appState.currentDistractionStart) / 1000);
-                    const hrs = String(Math.floor(elapsedSec / 3600)).padStart(2, '0');
-                    const mins = String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0');
-                    const secs = String(elapsedSec % 60).padStart(2, '0');
-                    display.textContent = `${hrs}:${mins}:${secs}`;
-                };
-                runTimer();
-                timerInterval = setInterval(runTimer, 1000);
-
-                let optHTML = appState.categories.map(c => `<option value="${c}">${c}</option>`).join('');
-
-                actionContainer.className = "block mt-4 bg-slate-800 rounded-2xl p-5 border border-amber-500/20 shadow-xl space-y-4";
-                actionContainer.innerHTML = `
-                    <div class="flex items-center space-x-2 border-b border-slate-700/50 pb-2">
-                        <span class="text-base">⚠️</span>
-                        <h3 class="text-sm font-bold text-amber-500 uppercase tracking-wider">Context Breakdown Log</h3>
-                    </div>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">What broke your focus block?</label>
-                            <input id="distractionInput" type="text" placeholder="e.g., Immediate call, phone check..." class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">Interruption Driver Category</label>
-                            <select id="categorySelect" class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2.5 text-sm text-slate-100 outline-none">
-                                ${optHTML}
-                            </select>
-                        </div>
-                        <button id="submitLogBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition-all mt-2">
-                            Log Driver & Resume Focus Block
-                        </button>
-                    </div>
-                `;
-
-                document.getElementById('submitLogBtn').onclick = () => {
-                    const resText = document.getElementById('distractionInput').value;
-                    const catVal = document.getElementById('categorySelect').value;
-                    handleLogReason(resText, catVal);
-                };
-            }
+            alert(`Strategic targets locked into operational space.`);
         }
 
         function calculateAndRenderAnalytics() {
@@ -578,8 +716,7 @@
             if (!barContainer || !driversContainer) return;
 
             const chartData = [];
-            let todayFocusMs = 0;
-            let todayTotalMs = 0;
+            let todayFocusMs = 0, todayTotalMs = 0;
             let categoryDriversMap = {};
             const todayStr = new Date().toLocaleDateString('en-US');
 
@@ -595,61 +732,55 @@
 
             appState.history.forEach(log => {
                 const dayBucket = chartData.find(c => c.dateStr === log.dateStr);
-                const totalBlockDuration = log.endTime - log.startTime;
-                const singleFocusDuration = totalBlockDuration - log.distractionTime;
+                const blockFocus = log.focusDurationMs || 0;
+                const blockDistract = log.distractionTime || 0;
 
                 if (dayBucket) {
-                    dayBucket.focusMs += singleFocusDuration;
-                    dayBucket.distractedMs += log.distractionTime;
+                    dayBucket.focusMs += blockFocus;
+                    dayBucket.distractedMs += blockDistract;
                 }
-
                 if (log.dateStr === todayStr) {
-                    todayFocusMs += singleFocusDuration;
-                    todayTotalMs += totalBlockDuration;
+                    todayFocusMs += blockFocus;
+                    todayTotalMs += (blockFocus + blockDistract);
                 }
-
                 if (log.category && log.category !== "None") {
-                    categoryDriversMap[log.category] = (categoryDriversMap[log.category] || 0) + log.distractionTime;
+                    categoryDriversMap[log.category] = (categoryDriversMap[log.category] || 0) + blockDistract;
                 }
             });
 
             const scoreEl = document.getElementById('weeklyScoreDisplay');
             const metaDisplay = document.getElementById('weeklyScoreMeta');
 
-            if (todayTotalMs < 3600000) {
+            if (todayTotalMs < 1000) {
                 scoreEl.textContent = "0%";
                 scoreEl.className = "text-3xl font-extrabold text-amber-500 font-mono my-2";
-                metaDisplay.textContent = "Insufficient Data: Track at least 1 hour today to view accurate metrics.";
+                metaDisplay.textContent = "Log performance blocks to verify metrics.";
             } else {
                 const efficiencyScore = Math.round((todayFocusMs / todayTotalMs) * 100);
                 scoreEl.textContent = `${efficiencyScore}%`;
                 scoreEl.className = "text-5xl font-extrabold text-emerald-400 font-mono my-2";
-                
-                if (efficiencyScore >= 80) metaDisplay.textContent = "Optimal operational efficiency today!";
-                else if (efficiencyScore >= 60) metaDisplay.textContent = "Moderate output. Context switching identified via logs.";
-                else metaDisplay.textContent = "High interruption patterns observed.";
+                metaDisplay.textContent = efficiencyScore >= 85 ? "Optimal operational metrics detected." : "Context switching limits identified.";
             }
 
             barContainer.innerHTML = '';
             chartData.forEach(day => {
-                const combinedMinutes = (day.focusMs + day.distractedMs) / 60000;
-                let focusPercentage = 0, distractedPercentage = 0;
-
-                if (combinedMinutes > 0) {
-                    focusPercentage = (day.focusMs / (day.focusMs + day.distractedMs)) * 100;
-                    distractedPercentage = (day.distractedMs / (day.focusMs + day.distractedMs)) * 100;
+                const totalMins = (day.focusMs + day.distractedMs) / 60000;
+                let focusPct = 0, distractPct = 0;
+                if (totalMins > 0) {
+                    focusPct = (day.focusMs / (day.focusMs + day.distractedMs)) * 100;
+                    distractPct = (day.distractedMs / (day.focusMs + day.distractedMs)) * 100;
                 }
 
                 const rowHtml = `
                     <div class="flex items-center space-x-2">
                         <span class="w-8 text-slate-400 text-xs font-medium">${day.label}</span>
                         <div class="flex-1 flex h-4 rounded-md overflow-hidden bg-slate-900/80 border border-slate-700/20">
-                            ${combinedMinutes > 0 ? `
-                                <div class="bg-indigo-500" style="width: ${focusPercentage}%"></div>
-                                <div class="bg-amber-500" style="width: ${distractedPercentage}%"></div>
-                            ` : `<div class="w-full text-slate-600 pl-2 text-[10px] flex items-center">No logs</div>`}
+                            ${totalMins > 0 ? `
+                                <div class="bg-indigo-500" style="width: ${focusPct}%"></div>
+                                <div class="bg-amber-500" style="width: ${distractPct}%"></div>
+                            ` : `<div class="w-full text-slate-600 pl-2 text-[10px] flex items-center">No structural logs</div>`}
                         </div>
-                        <span class="w-10 text-right text-slate-300 text-xs font-mono">${(combinedMinutes/60).toFixed(1)}h</span>
+                        <span class="w-10 text-right text-slate-300 text-xs font-mono">${(totalMins/60).toFixed(1)}h</span>
                     </div>
                 `;
                 barContainer.insertAdjacentHTML('beforeend', rowHtml);
@@ -672,78 +803,47 @@
         }
 
         function exportHumanCSV() {
-            let csvRows = ['Task,Date,Duration,DistractionTime,Reason,Category'];
-            
+            let csvRows = ['TaskCategory,DurationFocusMins,DurationDistractMins,Reason,Category,DateStr'];
             appState.history.forEach(log => {
-                const totalMins = Math.round((log.endTime - log.startTime) / 60000);
-                const distMins = Math.round(log.distractionTime / 60000);
-                
-                const durH = String(Math.floor(totalMins / 60)).padStart(2, '0');
-                const durM = String(totalMins % 60).padStart(2, '0');
-                const disH = String(Math.floor(distMins / 60)).padStart(2, '0');
-                const disM = String(distMins % 60).padStart(2, '0');
-
-                csvRows.push(`"${log.task}",${log.dateStr},${durH}:${durM},${disH}:${disM},"${log.reason}","${log.category}"`);
+                csvRows.push(`"${log.task}",${Math.round((log.focusDurationMs||0)/60000)},${Math.round(log.distractionTime/60000)},"${log.reason}","${log.category}",${log.dateStr}`);
             });
-
             const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'focusflow_backup.csv');
+            a.href = url;
+            a.download = 'focusflow_production_backup.csv';
             a.click();
         }
 
         function importHumanCSV(input) {
             const file = input.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
                 const lines = text.split('\n');
-                let newHistory = [];
-
-                for (let i = 1; i < lines.length; i++) {
-                    const row = lines[i].trim();
-                    if (!row) continue;
-
-                    const parts = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || row.split(',');
-                    if (parts.length < 6) continue;
-
-                    const task = parts[0].replace(/"/g, '');
-                    const dateStr = parts[1];
-                    const durationStr = parts[2];
-                    const distStr = parts[3];
-                    const reason = parts[4].replace(/"/g, '');
-                    const category = parts[5].replace(/"/g, '');
-
-                    const durParts = durationStr.split(':');
-                    const distParts = distStr.split(':');
-                    const durationMs = ((parseInt(durParts[0])*60) + parseInt(durParts[1])) * 60000;
-                    const distMs = ((parseInt(distParts[0])*60) + parseInt(distParts[1])) * 60000;
-
-                    const mockStart = new Date(dateStr).getTime() || Date.now();
-                    const mockEnd = mockStart + durationMs;
-
-                    newHistory.push({
-                        task: task,
-                        startTime: mockStart,
-                        endTime: mockEnd,
-                        distractionTime: distMs,
-                        reason: reason,
-                        category: category,
-                        dateStr: dateStr
-                    });
+                let parsedLogs = [];
+                for(let i=1; i<lines.length; i++) {
+                    const line = lines[i].trim();
+                    if(!line) continue;
+                    const parts = line.split(',');
+                    if(parts.length >= 6) {
+                        parsedLogs.push({
+                            task: parts[0].replace(/"/g,''),
+                            focusDurationMs: parseInt(parts[1]) * 60000,
+                            distractionTime: parseInt(parts[2]) * 60000,
+                            reason: parts[3].replace(/"/g,''),
+                            category: parts[4].replace(/"/g,''),
+                            dateStr: parts[5],
+                            startTime: Date.now(), endTime: Date.now()
+                        });
+                    }
                 }
-
-                if (newHistory.length > 0) {
-                    appState.history = [...appState.history, ...newHistory];
+                if (parsedLogs.length > 0) {
+                    appState.history = [...appState.history, ...parsedLogs];
                     saveToStorage();
                     renderApp();
-                    alert(`Successfully imported ${newHistory.length} handwritten logs!`);
-                } else {
-                    alert("Invalid or empty format structure.");
+                    alert(`Imported ${parsedLogs.length} matrix sequences.`);
                 }
             };
             reader.readAsText(file);
